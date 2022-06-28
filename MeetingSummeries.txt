@@ -1,0 +1,6 @@
+# Meeting with Kobi and Rony 26/01/22:
+
+- selenium wait - 2 ways
+- xpath and css selector
+- page object model
+- Allure framework for reporting or extends reports most pupolar report portal
