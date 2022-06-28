@@ -17,9 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class _001_SearchForItemTest {
 
-    String searchItem = "Samsung Galaxy";
-    String baseUrl = "https://www.amazon.com/";
-    String zipCode = "90011";
+    //String zipCode = "90011";
     public static final By TOP_SEARCH_BOX_ID = By.id("twotabsearchtextbox");
     public static final By SEARCH_BUTTON = By.id("nav-search-submit-button");
     public static final By ALL_RETURNED_ELEMENT = By.xpath("//div[@data-component-type='s-search-result']//h2");
@@ -38,7 +36,7 @@ public class _001_SearchForItemTest {
             WebDriver driver = new ChromeDriver();
             // Implicitly Wait
             driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-            driver.get(baseUrl);
+            driver.get(Configuration.BASE_URL);
             driver.manage().window().maximize();
 
             // Explicit Wait
@@ -49,7 +47,7 @@ public class _001_SearchForItemTest {
             driver.findElement(ZIP_CODE_APPLY_BUTTON).click();
             driver.findElement(ZIP_CODE_DONE_BUTTON).click();
             */
-            driver.findElement(TOP_SEARCH_BOX_ID).sendKeys(searchItem);
+            driver.findElement(TOP_SEARCH_BOX_ID).sendKeys(Configuration.SEARCH_ITEM);
             driver.findElement(SEARCH_BUTTON).click();
 
             List<WebElement> searchResults = driver.findElements(ALL_RETURNED_ELEMENT);
