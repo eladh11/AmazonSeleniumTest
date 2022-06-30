@@ -4,3 +4,12 @@
 - xpath and css selector
 - page object model
 - Allure framework for reporting or extends reports most pupolar report portal
+
+
+# Meeting with Kobi 30/06/22:
+
+- fix selector for zip code
+- continue testing flow
+- adding doc for github
+- add Asserts in test
+- use dataprovider for test data
