@@ -1,14 +1,14 @@
 ## 🚀Amazon Selenium Test:
 
-Create a Simple Amazon Test. Navigates to the Amazon website using Java + TestNG + Selenium, reach for Amazon "Samsung Galaxy" & adding element to cart
-## Technologies used:
+Create a Simple Amazon Test.
+### Technologies used:
 
 - Java 8+
 - Intellij 
 - TestNG
 - Selenium
 
-## Steps:
+### Steps:
 
 1. Create new Maven Project on Intellij.
 2. To use TestNG and Selenium Search for the Required Dependencies on [Maven Repository](https://mvnrepository.com/).
