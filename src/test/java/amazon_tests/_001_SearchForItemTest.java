@@ -60,10 +60,10 @@ public class _001_SearchForItemTest {
         List<WebElement> listPriceWE = driver.findElements(PRICE_LIST);
         List<Double> listPrice = new ArrayList<>();
         for (WebElement lp : listPriceWE) {
-            if (lp.getText().replace(",","").equals("")) {
+            if (lp.getText().replace(",", "").equals("")) {
                 listPrice.add(0.0);
             } else {
-                listPrice.add(Double.valueOf(lp.getText().replace(",","")));
+                listPrice.add(Double.valueOf(lp.getText().replace(",", "")));
             }
         }
         List<WebElement> listPriceFractionWE = driver.findElements(PRICE_FRACTION_LIST);
@@ -72,13 +72,13 @@ public class _001_SearchForItemTest {
             if (lpFraction.getText().equals("") || Double.valueOf(lpFraction.getText()) == 00) {
                 listPriceFraction.add(0.0);
             } else {
-               double res = Double.valueOf(lpFraction.getText()) / 100;
+                double res = Double.valueOf(lpFraction.getText()) / 100;
                 listPriceFraction.add(res);
             }
         }
         List<Double> finalPriceList = new ArrayList<>();
         for (int i = 0; i < listPrice.size(); i++) {
-            if(listPrice.get(i) + listPriceFraction.get(i) > 0.0){
+            if (listPrice.get(i) + listPriceFraction.get(i) > 0.0) {
                 finalPriceList.add(listPrice.get(i) + listPriceFraction.get(i));
             }
         }
@@ -90,16 +90,16 @@ public class _001_SearchForItemTest {
         linksFromResult.get(randomNumber).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(ADD_TO_CART));
         driver.findElement(ADD_TO_CART).click();
-        try{
+        try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(NO_THANKS_BUTTON));
             driver.findElement(NO_THANKS_BUTTON).click();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Probably selected a product that does not require to use NO_THANKS button...");
         }
-        try{
+        try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(CLOSE_SIDE_BUTTON));
             driver.findElement(CLOSE_SIDE_BUTTON).click();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Probably selected a product that does not require to use CLOSE_SIDE button...");
         }
 
@@ -117,7 +117,7 @@ public class _001_SearchForItemTest {
         // Verify the price on cart is bigger than 0
         driver.findElement(NAV_CART_BUTTON).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(SUBTOTAL_PRICE));
-        boolean subtotalPrice = Double.valueOf(driver.findElement(SUBTOTAL_PRICE).getText().replace("$","")) > 0;
-        AssertUtils.assertTrue(subtotalPrice,"Verify the price on cart is bigger than 0");
+        boolean subtotalPrice = Double.valueOf(driver.findElement(SUBTOTAL_PRICE).getText().replace("$", "")) > 0;
+        AssertUtils.assertTrue(subtotalPrice, "Verify the price on cart is bigger than 0");
     }
 }
