@@ -1,6 +1,7 @@
 package amazon_tests;
 
 import configuration.Configuration;
+import data_providers.DP_Test1;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,8 +18,6 @@ import java.util.stream.Collectors;
 
 public class _001_SearchForItemTest {
 
-    public static final String searchItem = "Samsung Galaxy";
-    public static final String ZIP_CODE = "90011";
     public static final By TOP_SEARCH_BOX_ID = By.id("twotabsearchtextbox");
     public static final By SEARCH_BUTTON = By.id("nav-search-submit-button");
     public static final By ALL_RETURNED_ELEMENT = By.xpath("//div[@data-component-type='s-search-result']//h2");
@@ -36,8 +35,8 @@ public class _001_SearchForItemTest {
     public static final By SUBTOTAL_PRICE = By.xpath("(//span[@class='a-size-medium a-color-base sc-price sc-white-space-nowrap'])[1]");
     public static final By NAV_CART_BUTTON = By.id("nav-cart");
 
-    @Test
-    public void _001_SearchForItem() {
+    @Test(dataProvider = "dp-test1", dataProviderClass = DP_Test1.class)
+    public void _001_SearchForItem(String search_item, String zip_code) {
         System.setProperty(Configuration.CHROME_BROWSER, Configuration.CHROME_DRIVER);
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
@@ -46,17 +45,17 @@ public class _001_SearchForItemTest {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         driver.findElement(GLOBAL_LOCATION).click();
-        driver.findElement(ZIP_CODE_INPUT).sendKeys(ZIP_CODE);
+        driver.findElement(ZIP_CODE_INPUT).sendKeys(zip_code);
         driver.findElement(ZIP_CODE_APPLY_BUTTON).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(ZIP_CODE_CONFIRM_BUTTON));
         driver.findElement(ZIP_CODE_CONFIRM_BUTTON).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(TOP_SEARCH_BOX_ID));
-        driver.findElement(TOP_SEARCH_BOX_ID).sendKeys(searchItem);
+        driver.findElement(TOP_SEARCH_BOX_ID).sendKeys(search_item);
         driver.findElement(SEARCH_BUTTON).click();
 
         // Verify cart contains 0 Products
         int cartCounter = Integer.parseInt(driver.findElement(CART_COUNT).getText());
-        AssertUtils.assertEquals(0, cartCounter, "Verify cart contains 0 Products Before adding one of " + searchItem);
+        AssertUtils.assertEquals(0, cartCounter, "Verify cart contains 0 Products Before adding one of " + search_item);
         List<WebElement> listPriceWE = driver.findElements(PRICE_LIST);
         List<Double> listPrice = new ArrayList<>();
         for (WebElement lp : listPriceWE) {
@@ -106,7 +105,7 @@ public class _001_SearchForItemTest {
         // Verify cart contains 1 Products
         wait.until(ExpectedConditions.textToBePresentInElement(driver.findElement(CART_COUNT), "1"));
         cartCounter = Integer.parseInt(driver.findElement(CART_COUNT).getText());
-        AssertUtils.assertEquals(1, cartCounter, "Verify cart contains 1 Product After adding one " + searchItem + " to cart");
+        AssertUtils.assertEquals(1, cartCounter, "Verify cart contains 1 Product After adding one " + search_item + " to cart");
 
         // Verify the title of the selected Product match to at least one title from the returned Products list
         String randomElementTitle = searchResultsTitles.get(randomNumber);
