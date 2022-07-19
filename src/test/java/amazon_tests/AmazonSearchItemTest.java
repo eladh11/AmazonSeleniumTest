@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class _001_SearchForItemTest {
+public class AmazonSearchItemTest {
 
     public static final By TOP_SEARCH_BOX_ID = By.id("twotabsearchtextbox");
     public static final By SEARCH_BUTTON = By.id("nav-search-submit-button");
@@ -36,7 +36,7 @@ public class _001_SearchForItemTest {
     public static final By NAV_CART_BUTTON = By.id("nav-cart");
 
     @Test(dataProvider = "dp-test1", dataProviderClass = DP_Test1.class)
-    public void _001_SearchForItem(String search_item, String zip_code) {
+    public void searchForItem(String search_item, String zip_code) {
         System.setProperty(Configuration.CHROME_BROWSER, Configuration.CHROME_DRIVER);
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
@@ -44,6 +44,7 @@ public class _001_SearchForItemTest {
         driver.manage().window().maximize();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
+        wait.until(ExpectedConditions.visibilityOfElementLocated(GLOBAL_LOCATION));
         driver.findElement(GLOBAL_LOCATION).click();
         driver.findElement(ZIP_CODE_INPUT).sendKeys(zip_code);
         driver.findElement(ZIP_CODE_APPLY_BUTTON).click();
@@ -59,10 +60,11 @@ public class _001_SearchForItemTest {
         List<WebElement> listPriceWE = driver.findElements(PRICE_LIST);
         List<Double> listPrice = new ArrayList<>();
         for (WebElement lp : listPriceWE) {
-            if (lp.getText().replace(",", "").equals("")) {
+            String removeCommasFromPrice = lp.getText().replace(",", "");
+            if (removeCommasFromPrice.equals("")) {
                 listPrice.add(0.0);
             } else {
-                listPrice.add(Double.valueOf(lp.getText().replace(",", "")));
+                listPrice.add(Double.valueOf(removeCommasFromPrice));
             }
         }
         List<WebElement> listPriceFractionWE = driver.findElements(PRICE_FRACTION_LIST);
@@ -107,13 +109,13 @@ public class _001_SearchForItemTest {
         cartCounter = Integer.parseInt(driver.findElement(CART_COUNT).getText());
         AssertUtils.assertEquals(1, cartCounter, "Verify cart contains 1 Product After adding one " + search_item + " to cart");
 
-        // Verify the title of the selected Product match to at least one title from the returned Products list
+        // Verify the title of the selected Product match to the title we excpected
         String randomElementTitle = searchResultsTitles.get(randomNumber);
         System.out.println("the selected phone is: " + randomElementTitle);
         boolean checkIfTitleExist = searchResultsTitles.contains(randomElementTitle);
         AssertUtils.assertTrue(checkIfTitleExist, "Verify the title of the selected Product exist in Results list");
 
-        // Verify the price on cart is bigger than 0
+        // Verify the price on cart is like the Product we selected
         driver.findElement(NAV_CART_BUTTON).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(SUBTOTAL_PRICE));
         boolean subtotalPrice = Double.valueOf(driver.findElement(SUBTOTAL_PRICE).getText().replace("$", "")) > 0;
