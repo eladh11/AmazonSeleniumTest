@@ -19,5 +19,5 @@ Create a Simple Amazon Test.
 7. Asserts:
 - Verify cart contains 0 Products in the begining of test.
 - Verify the title of the selected Product match to the title we excpected.
-- Verify the price on cart is bigger than 0.
+- Verify the price on cart is like the Product we selected.
 - Verify cart contains 1 Product in the end of test.
