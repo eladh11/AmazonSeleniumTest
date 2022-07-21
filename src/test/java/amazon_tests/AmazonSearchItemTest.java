@@ -34,15 +34,19 @@ public class AmazonSearchItemTest {
     public static final By CLOSE_SIDE_BUTTON = By.id("attach-close_sideSheet-link");
     public static final By SUBTOTAL_PRICE = By.xpath("(//span[@class='a-size-medium a-color-base sc-price sc-white-space-nowrap'])[1]");
     public static final By NAV_CART_BUTTON = By.id("nav-cart");
+    public static final By TEXT_PRICE_WHOLE = By.xpath("//span[@class='a-price-whole']");
+    public static final By TEXT_PRICE_FRACTION = By.xpath("//span[@class='a-price-fraction']");
+    public static final By TEXT_PRICE_WITHOUT_FRACTION = By.xpath("//span[@class = 'a-offscreen']");
 
     @Test(dataProvider = "dp-test1", dataProviderClass = DP_Test1.class)
-    public void searchForItem(String search_item, String zip_code) {
+    public void searchForItem(String item_name, String zip_code) {
         System.setProperty(Configuration.CHROME_BROWSER, Configuration.CHROME_DRIVER);
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(Configuration.BASE_URL);
         driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.get(Configuration.BASE_URL);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(GLOBAL_LOCATION));
         driver.findElement(GLOBAL_LOCATION).click();
@@ -50,13 +54,14 @@ public class AmazonSearchItemTest {
         driver.findElement(ZIP_CODE_APPLY_BUTTON).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(ZIP_CODE_CONFIRM_BUTTON));
         driver.findElement(ZIP_CODE_CONFIRM_BUTTON).click();
+        driver.get(Configuration.BASE_URL);
         wait.until(ExpectedConditions.visibilityOfElementLocated(TOP_SEARCH_BOX_ID));
-        driver.findElement(TOP_SEARCH_BOX_ID).sendKeys(search_item);
+        driver.findElement(TOP_SEARCH_BOX_ID).sendKeys("Samsung Galaxy");
         driver.findElement(SEARCH_BUTTON).click();
 
         // Verify cart contains 0 Products
         int cartCounter = Integer.parseInt(driver.findElement(CART_COUNT).getText());
-        AssertUtils.assertEquals(0, cartCounter, "Verify cart contains 0 Products Before adding one of " + search_item);
+        AssertUtils.assertEquals(0, cartCounter, "Verify cart contains 0 Products Before adding one of " + item_name);
         List<WebElement> listPriceWE = driver.findElements(PRICE_LIST);
         List<Double> listPrice = new ArrayList<>();
         for (WebElement lp : listPriceWE) {
@@ -89,6 +94,24 @@ public class AmazonSearchItemTest {
         int randomNumber = (int) ((Math.random() * (searchResultsTitles.size() - 0)));
         List<WebElement> linksFromResult = driver.findElements(LIST_OF_RESULTS_LINKS);
         linksFromResult.get(randomNumber).click();
+
+        // Save the price of the selected product
+        String res = "";
+        try {
+            List<WebElement> priceWithoutFractionList = driver.findElements(TEXT_PRICE_WITHOUT_FRACTION);
+            String priceWhole = priceWithoutFractionList.get(0).getText().replace("$", "");
+            res = priceWhole;
+        } catch (Exception e) {
+            System.out.println("Price contains fraction...");
+        }
+        List<WebElement> priceWholeList = driver.findElements(TEXT_PRICE_WHOLE);
+        String priceWhole = priceWholeList.get(0).getText();
+        List<WebElement> priceFractionList = driver.findElements(TEXT_PRICE_FRACTION);
+        String priceFraction = priceFractionList.get(0).getText();
+        res = priceWhole + "." + priceFraction;
+        double finalPrice = Double.valueOf(res);
+        System.out.println("The Price For the Selected Product = " + finalPrice);
+
         wait.until(ExpectedConditions.visibilityOfElementLocated(ADD_TO_CART));
         driver.findElement(ADD_TO_CART).click();
         try {
@@ -107,7 +130,7 @@ public class AmazonSearchItemTest {
         // Verify cart contains 1 Products
         wait.until(ExpectedConditions.textToBePresentInElement(driver.findElement(CART_COUNT), "1"));
         cartCounter = Integer.parseInt(driver.findElement(CART_COUNT).getText());
-        AssertUtils.assertEquals(1, cartCounter, "Verify cart contains 1 Product After adding one " + search_item + " to cart");
+        AssertUtils.assertEquals(1, cartCounter, "Verify cart contains 1 Product After adding one " + item_name + " to cart");
 
         // Verify the title of the selected Product match to the title we excpected
         String randomElementTitle = searchResultsTitles.get(randomNumber);
@@ -118,7 +141,7 @@ public class AmazonSearchItemTest {
         // Verify the price on cart is like the Product we selected
         driver.findElement(NAV_CART_BUTTON).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(SUBTOTAL_PRICE));
-        boolean subtotalPrice = Double.valueOf(driver.findElement(SUBTOTAL_PRICE).getText().replace("$", "")) > 0;
-        AssertUtils.assertTrue(subtotalPrice, "Verify the price on cart is bigger than 0");
+        boolean subtotalPrice = Double.valueOf(driver.findElement(SUBTOTAL_PRICE).getText().replace("$", "")) == finalPrice;
+        AssertUtils.assertTrue(subtotalPrice, "Verify price on cart is like the price of Product we selected");
     }
 }
