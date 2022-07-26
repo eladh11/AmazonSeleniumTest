@@ -43,6 +43,7 @@ public class AmazonSearchResultPage extends AbstractPage {
         return this;
     }
 
+    //TODO - verify i take the currect price of the selected item
     public AmazonSearchResultPage verifyCartContainOneProduct() {
         List<WebElement> listPriceWE = driver.findElements(PRICE_LIST);
         List<Double> listPrice = new ArrayList<>();
