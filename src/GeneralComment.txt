@@ -1,0 +1,9 @@
+1.
+.idea folder contains files that are used by IntelliJ and not required to be added to Git.
+You can remove tracking of them without deleting their copy from your local folder (they are required locally).
+Open a terminal windows, use "cd" to get to the folder of your project and then follow instructions to be found here:
+https://www.delftstack.com/howto/git/git-stop-tracking-file/
+
+2. Page object model files should be put in "src\main\java" as they are part of the infrastructure.
+3. Assertions should not be part of the page object model files. They belong to the tests. Page object model will return
+an indication whether a certain state exists and that indication with be processed by the test's assertion.
